@@ -57,4 +57,13 @@ public class User {
         this.hashedPassword = hashedPassword;
     }
 
+    @Override
+    public String toString() {
+        return new StringBuilder()
+                .append(getFirstName())
+                .append(" ")
+                .append(getLastName())
+                .toString();
+    }
+
 }
