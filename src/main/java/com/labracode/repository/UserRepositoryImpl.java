@@ -5,6 +5,8 @@ import com.labracode.model.User;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Random;
 
 @Service
 public class UserRepositoryImpl implements UserRepository {
@@ -18,6 +20,15 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User createUser(User user) throws UserAlreadyExistsException {
+
+        Random random = new Random();
+        Integer id = random.nextInt(100) + 1;
+        user.setId(id.toString());
+
+        String textPassword = user.getPlainTextPassword() == null ? "" : user.getPlainTextPassword();
+        String hashedPassword = Base64.getEncoder().encodeToString(textPassword.getBytes());
+        user.setHashedPassword(hashedPassword);
+
         userList.add(user);
         return user;
     }

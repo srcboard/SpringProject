@@ -54,8 +54,8 @@ public class User {
     public void setUserName(String userName) {
         this.userName = userName;
     }
-
-    @JsonIgnore
+    
+    @JsonProperty("password")
     public String getPlainTextPassword() {
         return plainTextPassword;
     }
