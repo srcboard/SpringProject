@@ -21,6 +21,10 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public User createUser(User user) throws UserAlreadyExistsException {
 
+        if (userExists(user)) {
+            throw new UserAlreadyExistsException(user.toString());
+        }
+
         Random random = new Random();
         Integer id = random.nextInt(100) + 1;
         user.setId(id.toString());

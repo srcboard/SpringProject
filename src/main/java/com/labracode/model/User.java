@@ -1,8 +1,10 @@
 package com.labracode.model;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@JsonFilter("userFilter")
 public class User {
 
     private String id;
@@ -54,7 +56,7 @@ public class User {
     public void setUserName(String userName) {
         this.userName = userName;
     }
-    
+
     @JsonProperty("password")
     public String getPlainTextPassword() {
         return plainTextPassword;

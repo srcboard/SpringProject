@@ -1,4 +1,4 @@
-package com.labracode;
+package com.labracode.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
@@ -42,18 +42,15 @@ public class UserControllerTest {
     @Test
     public void successfulUserRegistration() throws Exception {
 
-        User newUser = new User("Ivan2", "Ivanov", "Ivan2", "123");
-
         ObjectMapper mapper = new ObjectMapper();
-        String[] customIgnorableField = {"id", "hashedPassword"};
-        FilterProvider filters = new SimpleFilterProvider().
-                addFilter("UserJSONFilter", SimpleBeanPropertyFilter.serializeAllExcept(customIgnorableField));
+        SimpleBeanPropertyFilter theFilter = SimpleBeanPropertyFilter.serializeAllExcept("id");
+        FilterProvider filters = new SimpleFilterProvider().addFilter("userFilter", theFilter);
 
-        String userJson = mapper.writer(filters).writeValueAsString(newUser);
+        String userAsString = mapper.writer(filters).writeValueAsString(getNewUser());
 
         mockMvc.perform(post("/api/user")
                 .contentType(contentType)
-                .content(userJson))
+                .content(userAsString))
                 .andExpect(status().isOk());
 
     }
@@ -61,20 +58,25 @@ public class UserControllerTest {
     @Test
     public void userAlreadyExists() throws Exception {
 
-        User newUser = new User("Ivan", "Ivanov", "Ivan", "123");
-
         ObjectMapper mapper = new ObjectMapper();
-        String[] customIgnorableField = {"id", "hashedPassword"};
-        FilterProvider filters = new SimpleFilterProvider().
-                addFilter("UserJSONFilter", SimpleBeanPropertyFilter.serializeAllExcept(customIgnorableField));
+        SimpleBeanPropertyFilter theFilter = SimpleBeanPropertyFilter.serializeAllExcept("id");
+        FilterProvider filters = new SimpleFilterProvider().addFilter("userFilter", theFilter);
 
-        String userJson = mapper.writer(filters).writeValueAsString(newUser);
+        String userAsString = mapper.writer(filters).writeValueAsString(getExistingUser());
 
         mockMvc.perform(post("/api/user")
                 .contentType(contentType)
-                .content(userJson))
+                .content(userAsString))
                 .andExpect(status().isConflict());
 
+    }
+
+    private User getExistingUser() {
+        return new User("Ivan", "Ivanov", "Ivan", "123");
+    }
+
+    private User getNewUser() {
+        return new User("Ivan2", "Ivanov", "Ivan2", "123");
     }
 
 }
