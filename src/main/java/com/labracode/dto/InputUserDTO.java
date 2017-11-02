@@ -1,13 +1,13 @@
 package com.labracode.dto;
 
-public class UserDTO {
+public class InputUserDTO {
 
     private String firstName;
     private String lastName;
     private String userName;
     private String plainTextPassword;
 
-    public UserDTO(String firstName, String lastName, String userName, String plainTextPassword) {
+    public InputUserDTO(String firstName, String lastName, String userName, String plainTextPassword) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.userName = userName;

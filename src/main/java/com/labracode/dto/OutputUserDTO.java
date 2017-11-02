@@ -1,17 +1,25 @@
 package com.labracode.dto;
 
-public class UserDTO {
+public class OutputUserDTO {
 
+    private String id;
     private String firstName;
     private String lastName;
     private String userName;
-    private String plainTextPassword;
 
-    public UserDTO(String firstName, String lastName, String userName, String plainTextPassword) {
+    public OutputUserDTO(String id, String firstName, String lastName, String userName) {
+        this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.userName = userName;
-        this.plainTextPassword = plainTextPassword;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getFirstName() {
@@ -36,14 +44,6 @@ public class UserDTO {
 
     public void setUserName(String userName) {
         this.userName = userName;
-    }
-
-    public String getPlainTextPassword() {
-        return plainTextPassword;
-    }
-
-    public void setPlainTextPassword(String plainTextPassword) {
-        this.plainTextPassword = plainTextPassword;
     }
 
 }

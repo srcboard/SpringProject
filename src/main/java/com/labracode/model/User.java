@@ -3,8 +3,8 @@ package com.labracode.model;
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.labracode.dto.OutputUserDTO;
 
-@JsonFilter("userFilter")
 public class User {
 
     private String id;
@@ -101,6 +101,10 @@ public class User {
                 .append(" ")
                 .append(getLastName())
                 .toString();
+    }
+
+    public OutputUserDTO getOutputDTO() {
+        return new OutputUserDTO(getId(), getFirstName(), getLastName(),getUserName());
     }
 
 }

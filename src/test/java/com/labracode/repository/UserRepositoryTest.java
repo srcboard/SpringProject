@@ -13,13 +13,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
-public class UserRepositoryTest {
+class UserRepositoryTest {
 
     @Autowired
     private UserRepository userRepository;
 
     @Test
-    public void successfulCreateUser() {
+    void successfulCreateUser() {
 
         assertThrows(UserAlreadyExistsException.class, () -> {
             User user = userRepository.createUser(getExistingUser());
@@ -28,7 +28,7 @@ public class UserRepositoryTest {
     }
 
     @Test
-    public void failedCreateUser() {
+    void failedCreateUser() {
 
         User user = userRepository.createUser(getNewUser());
         assertTrue(!user.getId().isEmpty());

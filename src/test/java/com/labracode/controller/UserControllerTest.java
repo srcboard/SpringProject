@@ -1,10 +1,7 @@
 package com.labracode.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ser.FilterProvider;
-import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
-import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
-import com.labracode.model.User;
+import com.labracode.dto.InputUserDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,31 +20,29 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
-public class UserControllerTest {
+class UserControllerTest {
 
     private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
             MediaType.APPLICATION_JSON.getSubtype(),
             Charset.forName("utf8"));
 
     @Autowired
-    WebApplicationContext wac;
+    private WebApplicationContext wac;
 
-    MockMvc mockMvc;
+    @Autowired
+    private ObjectMapper mapper;
+
+    private MockMvc mockMvc;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(wac).dispatchOptions(true).build();
     }
 
     @Test
-    public void successfulUserRegistration() throws Exception {
+    void successfulUserRegistration() throws Exception {
 
-        ObjectMapper mapper = new ObjectMapper();
-        SimpleBeanPropertyFilter theFilter = SimpleBeanPropertyFilter.serializeAllExcept("id");
-        FilterProvider filters = new SimpleFilterProvider().addFilter("userFilter", theFilter);
-
-        String userAsString = mapper.writer(filters).writeValueAsString(getNewUser());
-
+        String userAsString = mapper.writer().writeValueAsString(getNewUser());
         mockMvc.perform(post("/api/user")
                 .contentType(contentType)
                 .content(userAsString))
@@ -56,14 +51,9 @@ public class UserControllerTest {
     }
 
     @Test
-    public void userAlreadyExists() throws Exception {
+    void userAlreadyExists() throws Exception {
 
-        ObjectMapper mapper = new ObjectMapper();
-        SimpleBeanPropertyFilter theFilter = SimpleBeanPropertyFilter.serializeAllExcept("id");
-        FilterProvider filters = new SimpleFilterProvider().addFilter("userFilter", theFilter);
-
-        String userAsString = mapper.writer(filters).writeValueAsString(getExistingUser());
-
+        String userAsString = mapper.writer().writeValueAsString(getExistingUser());
         mockMvc.perform(post("/api/user")
                 .contentType(contentType)
                 .content(userAsString))
@@ -71,12 +61,12 @@ public class UserControllerTest {
 
     }
 
-    private User getExistingUser() {
-        return new User("Ivan", "Ivanov", "Ivan", "123");
+    private InputUserDTO getExistingUser() {
+        return new InputUserDTO("Ivan", "Ivanov", "Ivan", "123");
     }
 
-    private User getNewUser() {
-        return new User("Ivan2", "Ivanov", "Ivan2", "123");
+    private InputUserDTO getNewUser() {
+        return new InputUserDTO("Ivan2", "Ivanov", "Ivan2", "123");
     }
 
 }

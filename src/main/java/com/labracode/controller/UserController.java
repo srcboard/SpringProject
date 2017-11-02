@@ -2,9 +2,6 @@ package com.labracode.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ser.FilterProvider;
-import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
-import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.labracode.exceptions.UserAlreadyExistsException;
 import com.labracode.model.ErrorMessage;
 import com.labracode.model.User;
@@ -24,34 +21,20 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
-//    @RequestMapping(value = {"", "/"}, method = RequestMethod.POST)
-//    public ResponseEntity<User> userRegistration(@RequestBody User user) throws UserAlreadyExistsException {
-//
-//        if (userRepository.userExists(user)) {
-//            throw new UserAlreadyExistsException(user.toString());
-//        }
-//
-//        User createdUser = userRepository.createUser(user);
-//        return new ResponseEntity<User>(createdUser, HttpStatus.OK);
-//
-//    }
+    @Autowired
+    private ObjectMapper mapper;
 
     @RequestMapping(value = {"", "/"}, method = RequestMethod.POST, produces = "application/json")
-    public ResponseEntity<String> userRegistration(@RequestBody User user) throws UserAlreadyExistsException, JsonProcessingException {
+    public ResponseEntity<String> userRegistration(@RequestBody User InputUserDTO) throws UserAlreadyExistsException, JsonProcessingException {
 
-        ObjectMapper mapper = new ObjectMapper();
-
-        if (userRepository.userExists(user)) {
+        if (userRepository.userExists(InputUserDTO)) {
             ErrorMessage errorMessage = new ErrorMessage("USER_ALREADY_EXISTS", "A user with the given username already exists");
             String messageAsString = mapper.writer().writeValueAsString(errorMessage);
             return new ResponseEntity<String>(messageAsString, HttpStatus.CONFLICT);
         }
 
-        User createdUser = userRepository.createUser(user);
-
-        SimpleBeanPropertyFilter theFilter = SimpleBeanPropertyFilter.serializeAllExcept("password");
-        FilterProvider filters = new SimpleFilterProvider().addFilter("userFilter", theFilter);
-        String userAsString = mapper.writer(filters).writeValueAsString(user);
+        User createdUser = userRepository.createUser(InputUserDTO);
+        String userAsString = mapper.writer().writeValueAsString(createdUser.getOutputDTO());
         return new ResponseEntity<String>(userAsString, HttpStatus.OK);
 
     }
