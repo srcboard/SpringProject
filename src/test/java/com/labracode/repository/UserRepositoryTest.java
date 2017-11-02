@@ -2,24 +2,29 @@ package com.labracode.repository;
 
 import com.labracode.exceptions.UserAlreadyExistsException;
 import com.labracode.model.User;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static junit.framework.TestCase.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest
 public class UserRepositoryTest {
 
     @Autowired
     private UserRepository userRepository;
 
-    @Test(expected = UserAlreadyExistsException.class)
+    @Test
     public void successfulCreateUser() {
-        User user = userRepository.createUser(getExistingUser());
+
+        assertThrows(UserAlreadyExistsException.class, () -> {
+            User user = userRepository.createUser(getExistingUser());
+        });
+
     }
 
     @Test
