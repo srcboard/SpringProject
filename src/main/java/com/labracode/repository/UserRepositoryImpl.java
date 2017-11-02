@@ -1,11 +1,13 @@
 package com.labracode.repository;
 
+import com.labracode.dto.UserDTO;
 import com.labracode.exceptions.UserAlreadyExistsException;
 import com.labracode.model.User;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Optional;
 import java.util.Random;
 
 @Service
@@ -19,27 +21,44 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public User createUser(User user) throws UserAlreadyExistsException {
+    public UserDTO createUser(UserDTO user) throws UserAlreadyExistsException {
 
-        if (userExists(user)) {
+        if (isExistUserName(user.getUserName()).isPresent()) {
             throw new UserAlreadyExistsException(user.toString());
         }
 
+        User newUser = new User();
+        newUser.setFirstName(user.getFirstName());
+        newUser.setLastName(user.getLastName());
+        newUser.setUserName(user.getUserName());
+        newUser.setPlainTextPassword(user.getPlainTextPassword());
+
         Random random = new Random();
         Integer id = random.nextInt(100) + 1;
-        user.setId(id.toString());
+        newUser.setId(id.toString());
 
-        String textPassword = user.getPlainTextPassword() == null ? "" : user.getPlainTextPassword();
+        String textPassword = newUser.getPlainTextPassword() == null ? "" : newUser.getPlainTextPassword();
         String hashedPassword = Base64.getEncoder().encodeToString(textPassword.getBytes());
-        user.setHashedPassword(hashedPassword);
+        newUser.setHashedPassword(hashedPassword);
 
-        userList.add(user);
+        userList.add(newUser);
+
+        user.setId(newUser.getId());
+        user.setPlainTextPassword(null);
+
         return user;
+
     }
 
-    @Override
-    public Boolean userExists(User user) {
-        return userList.contains(user);
+//    @Override
+//    public Boolean userExists(User user) {
+//        return userList.contains(user);
+//    }
+
+    private Optional<User> isExistUserName(String userName) {
+        return userList.stream()
+                .filter(user -> user.getUserName().equals(userName))
+                .findFirst();
     }
 
 }

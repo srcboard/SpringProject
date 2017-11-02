@@ -1,7 +1,7 @@
 package com.labracode.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.labracode.dto.InputUserDTO;
+import com.labracode.dto.UserDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -61,12 +61,12 @@ class UserControllerTest {
 
     }
 
-    private InputUserDTO getExistingUser() {
-        return new InputUserDTO("Ivan", "Ivanov", "Ivan", "123");
+    private UserDTO getExistingUser() {
+        return new UserDTO("Ivan", "Ivanov", "Ivan", "123");
     }
 
-    private InputUserDTO getNewUser() {
-        return new InputUserDTO("Ivan2", "Ivanov", "Ivan2", "123");
+    private UserDTO getNewUser() {
+        return new UserDTO("Ivan2", "Ivanov", "Ivan2", "123");
     }
 
 }
