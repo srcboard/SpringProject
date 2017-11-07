@@ -1,29 +1,24 @@
-package com.labracode.repository;
+package com.labracode.service;
 
 import com.labracode.dto.UserDTO;
 import com.labracode.exceptions.UserAlreadyExistsException;
 import com.labracode.model.User;
+import com.labracode.repo.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Optional;
-import java.util.Random;
 
 @Service
-public class UserRepositoryImpl implements UserRepository {
+public class UserServiceImpl implements UserService {
 
-    private static ArrayList<User> userList = new ArrayList<User>();
-
-    static {
-        userList.add(new User("Ivan", "Ivanov", "Ivan", "123"));
-        userList.add(new User("Petr", "Petrovich", "Petr", "123"));
-    }
+    @Autowired
+    UserRepository userRepository;
 
     @Override
     public UserDTO createUser(UserDTO user) throws UserAlreadyExistsException {
 
-        if (isExistUserName(user.getUserName()).isPresent()) {
+        if (isExistUserName(user)) {
             throw new UserAlreadyExistsException(user.toString());
         }
 
@@ -33,15 +28,11 @@ public class UserRepositoryImpl implements UserRepository {
         newUser.setUserName(user.getUserName());
         newUser.setPlainTextPassword(user.getPlainTextPassword());
 
-        Random random = new Random();
-        Integer id = random.nextInt(100) + 1;
-        newUser.setId(id.toString());
-
         String textPassword = newUser.getPlainTextPassword() == null ? "" : newUser.getPlainTextPassword();
         String hashedPassword = Base64.getEncoder().encodeToString(textPassword.getBytes());
         newUser.setHashedPassword(hashedPassword);
 
-        userList.add(newUser);
+        userRepository.save(newUser);
 
         user.setId(newUser.getId());
         user.setPlainTextPassword(null);
@@ -50,15 +41,8 @@ public class UserRepositoryImpl implements UserRepository {
 
     }
 
-//    @Override
-//    public Boolean userExists(User user) {
-//        return userList.contains(user);
-//    }
-
-    private Optional<User> isExistUserName(String userName) {
-        return userList.stream()
-                .filter(user -> user.getUserName().equals(userName))
-                .findFirst();
+    private boolean isExistUserName(UserDTO userDTO) {
+        return userRepository.findByUserName(userDTO.getUserName()) != null;
     }
 
 }

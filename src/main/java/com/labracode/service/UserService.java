@@ -1,12 +1,10 @@
-package com.labracode.repository;
+package com.labracode.service;
 
 import com.labracode.dto.UserDTO;
 import com.labracode.exceptions.UserAlreadyExistsException;
-import com.labracode.model.User;
 
-public interface UserRepository {
+public interface UserService {
 
     UserDTO createUser(UserDTO user) throws UserAlreadyExistsException;
-//    Boolean userExists(UserDTO user);
 
 }

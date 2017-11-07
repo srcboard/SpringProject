@@ -1,23 +1,22 @@
-package com.labracode.repository;
+package com.labracode.service;
 
 import com.labracode.dto.UserDTO;
 import com.labracode.exceptions.UserAlreadyExistsException;
-import com.labracode.model.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 class UserRepositoryTest {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userRepository;
 
     @Test
     void successfulCreateUser() {
@@ -32,7 +31,7 @@ class UserRepositoryTest {
     void failedCreateUser() {
 
         UserDTO user = userRepository.createUser(getNewUser());
-        assertTrue(!user.getId().isEmpty());
+        assertNotNull(user.getId());
 
     }
 

@@ -1,13 +1,14 @@
 package com.labracode.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.labracode.model.User;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 @JsonInclude(NON_NULL)
 public class UserDTO {
 
-    private String id;
+    private Long id;
     private String firstName;
     private String lastName;
     private String userName;
@@ -23,12 +24,19 @@ public class UserDTO {
         this.plainTextPassword = plainTextPassword;
     }
 
+    public UserDTO(User user) {
+        setFirstName(user.getFirstName());
+        setLastName(user.getLastName());
+        setUserName(user.getUserName());
+        setPlainTextPassword(user.getPlainTextPassword());
+    }
 
-    public String getId() {
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

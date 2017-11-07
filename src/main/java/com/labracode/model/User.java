@@ -4,14 +4,29 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.labracode.dto.UserDTO;
 
+import javax.persistence.*;
+import java.util.Set;
+
+@Entity
 public class User {
 
-    private String id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "firstName")
     private String firstName;
+
     private String lastName;
+
     private String userName;
+
     private String plainTextPassword;
+
     private String hashedPassword;
+
+    @OneToMany
+    private Set<User> followers;
 
     public User() {
     }
@@ -23,11 +38,19 @@ public class User {
         this.plainTextPassword = plainTextPassword;
     }
 
-    public String getId() {
+    public Set<User> getFollowers() {
+        return followers;
+    }
+
+    public void setFollowers(Set<User> followers) {
+        this.followers = followers;
+    }
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -103,7 +126,7 @@ public class User {
     }
 
     public UserDTO getOutputDTO() {
-        return new UserDTO(getId(), getFirstName(), getLastName(),getUserName());
+        return new UserDTO(getFirstName(), getLastName(), getUserName(), getPlainTextPassword());
     }
 
 }

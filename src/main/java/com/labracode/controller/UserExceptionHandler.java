@@ -15,8 +15,7 @@ public class UserExceptionHandler {
     @ResponseStatus(value = HttpStatus.CONFLICT)
     @ResponseBody
     public ErrorMessage userAlreadyExistsException() {
-        ErrorMessage errorMessage = new ErrorMessage("USER_ALREADY_EXISTS", "A user with the given username already exists");
-        return errorMessage;
+        return new ErrorMessage();
     }
 
 }
