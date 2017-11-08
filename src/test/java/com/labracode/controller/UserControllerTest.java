@@ -12,11 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.util.HashSet;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -76,17 +78,34 @@ class UserControllerTest {
         followers.add(getNewUniqueUser());
         followers.add(getNewUniqueUser());
         followers.add(getNewUniqueUser());
+        dto.setFollowers(followers);
 
-        byte[] response = mockMvc.perform(post(API_USER_ENDPOINT)
+        ResultActions resultActions = mockMvc.perform(post(API_USER_ENDPOINT)
                 .contentType(APPLICATION_JSON_UTF8)
-                .content(mapper.writeValueAsBytes(dto)))
+                .content(mapper.writeValueAsBytes(dto)));
+
+        resultActions
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", Matchers.isA(Integer.class)))
                 .andExpect(jsonPath("$.firstName", Matchers.is(dto.getFirstName())))
                 .andExpect(jsonPath("$.lastName", Matchers.is(dto.getLastName())))
                 .andExpect(jsonPath("$.userName", Matchers.is(dto.getUserName())))
-                .andReturn().getResponse().getContentAsByteArray();
+                .andExpect(jsonPath("$.followers").isArray())
+                .andExpect(jsonPath("$.followers", hasSize(dto.getFollowers().size())));
+
+        for (int i = 0; i < dto.getFollowers().size() - 1; i++) {
+            resultActions
+                    .andExpect(jsonPath("$.followers[" + i + "].firstName",
+                            Matchers.is(dto.getFollowers().stream().skip(i).findFirst().get().getFirstName())))
+                    .andExpect(jsonPath("$.followers[" + i + "].lastName",
+                            Matchers.is(dto.getFollowers().stream().skip(i).findFirst().get().getLastName())))
+                    .andExpect(jsonPath("$.followers[" + i + "].userName",
+                            Matchers.is(dto.getFollowers().stream().skip(i).findFirst().get().getUserName())));
+
+        }
+
+        byte[] response = resultActions.andReturn().getResponse().getContentAsByteArray();
         return mapper.readValue(response, User.class);
 
     }

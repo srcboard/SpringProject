@@ -1,7 +1,10 @@
 package com.labracode.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.labracode.model.User;
+
+import java.util.Set;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
@@ -12,7 +15,9 @@ public class UserDTO {
     private String firstName;
     private String lastName;
     private String userName;
+    @JsonProperty("password")
     private String plainTextPassword;
+    private Set<UserDTO> followers;
 
     public UserDTO() {
     }
@@ -70,6 +75,14 @@ public class UserDTO {
 
     public void setPlainTextPassword(String plainTextPassword) {
         this.plainTextPassword = plainTextPassword;
+    }
+
+    public Set<UserDTO> getFollowers() {
+        return followers;
+    }
+
+    public void setFollowers(Set<UserDTO> followers) {
+        this.followers = followers;
     }
 
 }
