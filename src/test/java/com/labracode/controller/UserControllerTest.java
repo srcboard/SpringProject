@@ -105,6 +105,7 @@ class UserControllerTest {
 
         }
 
+
         byte[] response = resultActions.andReturn().getResponse().getContentAsByteArray();
         return mapper.readValue(response, User.class);
 
