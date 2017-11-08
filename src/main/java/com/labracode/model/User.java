@@ -1,20 +1,48 @@
 package com.labracode.model;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.labracode.dto.UserDTO;
 
-@JsonFilter("userFilter")
+import javax.persistence.*;
+import java.util.Base64;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+@Entity
 public class User {
 
-    private String id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "firstName")
     private String firstName;
+
     private String lastName;
+
     private String userName;
+
     private String plainTextPassword;
+
     private String hashedPassword;
 
+    @OneToMany(cascade = CascadeType.ALL)
+    private Set<User> followers;
+
     public User() {
+    }
+
+    public User(UserDTO userDTO) {
+        setFirstName(userDTO.getFirstName());
+        setLastName(userDTO.getLastName());
+        setUserName(userDTO.getUserName());
+        setPlainTextPassword(userDTO.getPlainTextPassword());
+        encodePassword();
+
+        setFollowers(userDTO.getFollowers().stream()
+                .map(dto -> new User(dto.getFirstName(), dto.getLastName(), dto.getUserName(), dto.getPlainTextPassword()))
+                .collect(Collectors.toSet()));
     }
 
     public User(String firstName, String lastName, String userName, String plainTextPassword) {
@@ -22,13 +50,22 @@ public class User {
         this.lastName = lastName;
         this.userName = userName;
         this.plainTextPassword = plainTextPassword;
+        encodePassword();
     }
 
-    public String getId() {
+    public Set<User> getFollowers() {
+        return followers;
+    }
+
+    public void setFollowers(Set<User> followers) {
+        this.followers = followers;
+    }
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -57,7 +94,6 @@ public class User {
         this.userName = userName;
     }
 
-    @JsonProperty("password")
     public String getPlainTextPassword() {
         return plainTextPassword;
     }
@@ -101,6 +137,11 @@ public class User {
                 .append(" ")
                 .append(getLastName())
                 .toString();
+    }
+
+    private void encodePassword() {
+        String textPassword = getPlainTextPassword() == null ? "" : getPlainTextPassword();
+        setHashedPassword(Base64.getEncoder().encodeToString(textPassword.getBytes()));
     }
 
 }

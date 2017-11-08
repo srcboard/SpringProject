@@ -1,11 +1,15 @@
 package com.labracode.model;
 
+import com.labracode.config.Constants;
+
 public class ErrorMessage {
 
     private String code;
     private String description;
 
     public ErrorMessage() {
+        setCode(Constants.errorMessageTitle);
+        setDescription(Constants.errorMessageDescription);
     }
 
     public ErrorMessage(String code, String description) {
